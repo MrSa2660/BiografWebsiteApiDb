@@ -13,6 +13,7 @@ public class Movie
     public string? TrailerUrl { get; set; }
     public DateTime? ReleaseDate { get; set; }
     public bool IsNowShowing { get; set; }
+    public string? CitiesCsv { get; set; }
     public string? ShowtimesCsv { get; set; }
     public bool IsHighlight { get; set; }
     public ICollection<Showtime> Showtimes { get; set; } = new List<Showtime>();

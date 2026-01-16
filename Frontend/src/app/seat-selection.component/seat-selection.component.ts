@@ -1,6 +1,6 @@
 // src/app/seat-selection/seat-selection.component.ts
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MovieService } from '../services/movie.service';
 import { Showtime } from '../models/showtime.model';
@@ -34,8 +34,7 @@ export class SeatSelectionComponent implements OnInit {
     private route: ActivatedRoute,
     private movieService: MovieService,
     private bookingService: BookingService,
-    private authService: AuthService,
-    private cdr: ChangeDetectorRef
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -122,14 +121,12 @@ export class SeatSelectionComponent implements OnInit {
         next: (booking) => {
           this.isSubmitting = false;
           this.successMessage = `Booking confirmed. ${booking.tickets.length} ticket(s) saved.`;
+          seats.forEach((s) => this.reservedSeats.add(this.seatKey(s.row, s.number)));
           this.selectedSeats.clear();
-          this.loadReservedSeats();
-          this.cdr.markForCheck();
         },
         error: () => {
           this.isSubmitting = false;
           this.error = 'Seats were just taken or booking failed. Please pick different seats and try again.';
-          this.cdr.markForCheck();
         },
       });
   }
@@ -142,12 +139,10 @@ export class SeatSelectionComponent implements OnInit {
         this.isLoading = false;
         this.loadScreen(showtime.screenId);
         this.loadReservedSeats();
-        this.cdr.markForCheck();
       },
       error: () => {
         this.isLoading = false;
         this.error = 'Could not load showtime details from the server.';
-        this.cdr.markForCheck();
       },
     });
   }
@@ -158,7 +153,6 @@ export class SeatSelectionComponent implements OnInit {
       error: () => {
         this.screen = { id: 0, name: 'Standard', rows: 8, seatsPerRow: 10 };
       },
-      complete: () => this.cdr.markForCheck(),
     });
   }
 
@@ -170,7 +164,6 @@ export class SeatSelectionComponent implements OnInit {
       error: () => {
         this.reservedSeats = new Set();
       },
-      complete: () => this.cdr.markForCheck(),
     });
   }
 

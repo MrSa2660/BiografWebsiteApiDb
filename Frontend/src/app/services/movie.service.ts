@@ -8,47 +8,28 @@ import { AuthService } from './auth.service';
 interface MovieApiResponse {
   id: number;
   title: string;
-  description: string | null;
   durationMinutes: number;
   genre: string | null;
   rating: string | null;
   language: string | null;
   posterUrl: string | null;
-  trailerUrl: string | null;
   showtimes: string | null;
+  cities: string | null;
   isHighlight: boolean;
-  isNowShowing: boolean;
-  releaseDate: string | null;
 }
 
 interface MovieApiRequest {
   id?: number;
   title: string;
-  description: string | null;
   durationMinutes: number;
   genre: string | null;
   rating: string | null;
   language: string | null;
   posterUrl: string | null;
-  trailerUrl: string | null;
   showtimes: string | null;
+  cities: string | null;
   isHighlight: boolean;
   isNowShowing: boolean;
-  releaseDate: string | null;
-}
-
-export interface CreateMovieRequest {
-  title: string;
-  description: string;
-  durationMinutes: number;
-  genres: string[];
-  rating: string;
-  language: string;
-  posterUrl: string;
-  trailerUrl: string;
-  isHighlight: boolean;
-  isNowShowing: boolean;
-  releaseDate: string | null;
 }
 
 @Injectable({
@@ -192,9 +173,17 @@ export class MovieService {
     );
   }
 
-  /** Returns movies (city filter no longer needed) */
-  getMoviesByCity(_city: string | null): Observable<Movie[]> {
-    return this.getAllMovies();
+  /** Returns movies available in a given city */
+  getMoviesByCity(city: string | null): Observable<Movie[]> {
+    return this.getAllMovies().pipe(
+      map((movies) => {
+        const cityKey = this.normalizeCity(city);
+        if (!cityKey) return movies;
+        return movies.filter((movie) =>
+          (movie.cities || []).some((c) => this.normalizeCity(c) === cityKey)
+        );
+      })
+    );
   }
 
   /** Returns the highlighted movie for a city (fallback to first movie) */
@@ -231,20 +220,18 @@ export class MovieService {
   }
 
   /** Adds a new movie and assigns it a unique ID */
-  addMovie(movieData: CreateMovieRequest): Observable<Movie> {
+  addMovie(movieData: Omit<Movie, 'id'>): Observable<Movie> {
     const payload: MovieApiRequest = {
       title: movieData.title,
-      description: movieData.description || '',
       durationMinutes: movieData.durationMinutes,
       genre: movieData.genres.join(', '),
       rating: movieData.rating,
       language: movieData.language,
       posterUrl: movieData.posterUrl,
-      trailerUrl: movieData.trailerUrl || '',
-      showtimes: '',
+      showtimes: movieData.showtimes.join(', '),
+      cities: movieData.cities.join(', '),
       isHighlight: movieData.isHighlight ?? false,
-      isNowShowing: movieData.isNowShowing ?? true,
-      releaseDate: movieData.releaseDate,
+      isNowShowing: true,
     };
 
     return this.http
@@ -258,17 +245,14 @@ export class MovieService {
     return {
       id: movie.id,
       title: movie.title,
-      description: movie.description ?? '',
       durationMinutes: movie.durationMinutes,
       genres: this.splitCsv(movie.genre),
       rating: movie.rating ?? '',
       language: movie.language ?? '',
       posterUrl: movie.posterUrl ?? '',
-      trailerUrl: movie.trailerUrl ?? '',
-      releaseDate: movie.releaseDate,
       showtimes: this.splitCsv(movie.showtimes),
+      cities: this.splitCsv(movie.cities),
       isHighlight: movie.isHighlight,
-      isNowShowing: movie.isNowShowing,
     };
   }
 
@@ -282,41 +266,12 @@ export class MovieService {
 
   private normalizeCity(value: string | null | undefined): string {
     if (!value) return '';
-    const ascii = value
-      .replace(/[øœ]/gi, 'oe')
-      .replace(/å/gi, 'aa')
-      .replace(/æ/gi, 'ae')
+    const cleaned = value
       .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '');
-
-    const cleaned = ascii
-      .replace(/[^a-zA-Z0-9 ]/g, ' ')
+      .replace(/[\u0300-\u036f]/g, '')
       .toLowerCase()
-      .replace(/\s+/g, ' ')
       .trim();
-
-    const compact = cleaned.replace(/\s+/g, '');
-    if (
-      compact.includes('storkoebenhavn')
-      || compact.includes('storkobenhavn')
-      || compact.includes('storkbenhaven')
-      || compact.includes('storkbenhavn')
-    ) {
-      return 'stor koebenhavn';
-    }
-    if (
-      compact.includes('koebenhavn')
-      || compact.includes('kobenhavn')
-      || compact.includes('kbenhaven')
-      || compact.includes('kbenhavn')
-      || compact.includes('copenhagen')
-    ) {
-      return 'koebenhavn';
-    }
-    if (compact.includes('aarhus')) return 'aarhus';
-    if (compact.includes('aalborg')) return 'aalborg';
-    if (compact.includes('fyn')) return 'fyn';
-    if (compact.includes('nykobingfalster')) return 'nykobing falster';
+    if (cleaned.includes('stor kobenhavn') || cleaned.includes('copenhagen')) return 'kobenhavn';
     return cleaned;
   }
 }

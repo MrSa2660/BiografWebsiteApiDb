@@ -29,7 +29,6 @@ public class ScreenService : IScreenService
         if (existing == null) return null;
 
         existing.Name = screen.Name;
-        existing.City = screen.City;
         existing.Rows = screen.Rows;
         existing.SeatsPerRow = screen.SeatsPerRow;
 
@@ -43,7 +42,6 @@ public class ScreenService : IScreenService
     {
         Id = screen.Id,
         Name = screen.Name,
-        City = screen.City,
         Rows = screen.Rows,
         SeatsPerRow = screen.SeatsPerRow
     };
@@ -52,7 +50,6 @@ public class ScreenService : IScreenService
     {
         Id = screen.Id,
         Name = screen.Name,
-        City = screen.City,
         Rows = screen.Rows,
         SeatsPerRow = screen.SeatsPerRow
     };

@@ -1,15 +1,10 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { map, Observable, tap } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 
 export interface LoginRequest {
   email: string;
   password: string;
-}
-
-export interface LoginResponse {
-  user: UserResponse;
-  token: string;
 }
 
 export interface SignupRequest {
@@ -33,9 +28,8 @@ export class AuthService {
   private readonly storageKey = 'biograf.currentUser';
 
   login(request: LoginRequest): Observable<UserResponse> {
-    return this.http.post<LoginResponse>(`${this.baseUrl}/login`, request).pipe(
-      tap((resp) => this.setSession(resp)),
-      map((resp) => resp.user)
+    return this.http.post<UserResponse>(`${this.baseUrl}/login`, request).pipe(
+      tap((user) => this.setSession(user))
     );
   }
 
@@ -51,36 +45,27 @@ export class AuthService {
     const stored = localStorage.getItem(this.storageKey);
     if (!stored) return null;
     try {
-      const parsed = JSON.parse(stored) as { user: UserResponse };
-      return parsed.user ?? null;
-    } catch {
-      return null;
-    }
-  }
-
-  getToken(): string | null {
-    const stored = localStorage.getItem(this.storageKey);
-    if (!stored) return null;
-    try {
-      const parsed = JSON.parse(stored) as { token: string };
-      return parsed.token ?? null;
+      return JSON.parse(stored) as UserResponse;
     } catch {
       return null;
     }
   }
 
   authHeaders(requireAdmin = false): HttpHeaders {
-    const token = this.getToken();
     const user = this.getCurrentUser();
-    if (!token || !user) return new HttpHeaders();
-    if (requireAdmin && user.role !== 'Admin') return new HttpHeaders();
+    if (!user) return new HttpHeaders();
+
+    if (requireAdmin && user.role !== 'Admin') {
+      return new HttpHeaders();
+    }
 
     return new HttpHeaders({
-      Authorization: `Bearer ${token}`,
+      'X-User-Id': user.id.toString(),
+      'X-User-Role': user.role,
     });
   }
 
-  private setSession(resp: LoginResponse) {
-    localStorage.setItem(this.storageKey, JSON.stringify(resp));
+  private setSession(user: UserResponse) {
+    localStorage.setItem(this.storageKey, JSON.stringify(user));
   }
 }

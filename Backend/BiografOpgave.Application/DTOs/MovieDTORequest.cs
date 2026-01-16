@@ -13,6 +13,7 @@ public class MovieDTORequest
     public string? TrailerUrl { get; set; }
     public DateTime? ReleaseDate { get; set; }
     public bool IsNowShowing { get; set; }
+    public string? Cities { get; set; }
     public string? Showtimes { get; set; }
     public bool IsHighlight { get; set; }
 }

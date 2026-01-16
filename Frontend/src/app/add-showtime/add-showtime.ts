@@ -3,8 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { MovieService } from '../services/movie.service';
-import { ShowtimeService, ScreenResponse, ShowtimeResponse } from '../services/showtime.service';
-import { ChangeDetectorRef } from '@angular/core';
+import { ShowtimeService, ScreenResponse } from '../services/showtime.service';
 
 interface MovieOption {
   id: number;
@@ -21,7 +20,6 @@ interface MovieOption {
 export class AddShowtime implements OnInit {
   movies: MovieOption[] = [];
   screens: ScreenResponse[] = [];
-  showtimes: ShowtimeResponse[] = [];
 
   movieId: number | null = null;
   screenId: number | null = null;
@@ -33,43 +31,22 @@ export class AddShowtime implements OnInit {
 
   message = '';
   error = '';
-  showtimesError = '';
   isSubmitting = false;
-  isLoadingShowtimes = false;
 
-  constructor(
-    private movieService: MovieService,
-    private showtimeService: ShowtimeService,
-    private cdr: ChangeDetectorRef
-  ) {}
+  constructor(private movieService: MovieService, private showtimeService: ShowtimeService) {}
 
   ngOnInit(): void {
-    // load movies + screens immediately
     this.movieService.getAllMovies().subscribe({
       next: (movies) => {
         this.movies = movies.map((m) => ({ id: m.id, title: m.title }));
-        this.cdr.markForCheck();
       },
-      error: () => {
-        this.error = 'Could not load movies';
-        this.cdr.markForCheck();
-      },
+      error: () => (this.error = 'Could not load movies'),
     });
 
     this.showtimeService.getScreens().subscribe({
-      next: (screens) => {
-        this.screens = screens;
-        this.cdr.markForCheck();
-      },
-      error: () => {
-        this.error = 'Could not load screens';
-        this.cdr.markForCheck();
-      },
+      next: (screens) => (this.screens = screens),
+      error: () => (this.error = 'Could not load screens'),
     });
-
-    // auto-load showtimes immediately
-    this.isLoadingShowtimes = true;
-    this.loadShowtimes();
   }
 
   submit() {
@@ -97,61 +74,12 @@ export class AddShowtime implements OnInit {
           this.isSubmitting = false;
           this.message = 'Showtime created.';
           this.time = '';
-          this.loadShowtimes();
-          this.cdr.markForCheck();
         },
         error: () => {
           this.isSubmitting = false;
           this.error = 'Could not create showtime.';
-          this.cdr.markForCheck();
         },
       });
-  }
-
-  loadShowtimes() {
-    this.showtimesError = '';
-    this.isLoadingShowtimes = true;
-    this.showtimeService.getAllShowtimes().subscribe({
-      next: (showtimes) => {
-        this.showtimes = [...showtimes].sort(
-          (a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
-        );
-        this.isLoadingShowtimes = false;
-        this.cdr.markForCheck();
-      },
-      error: () => {
-        this.isLoadingShowtimes = false;
-        this.showtimesError = 'Could not load showtimes.';
-        this.cdr.markForCheck();
-      },
-    });
-  }
-
-  getMovieTitle(movieId: number): string {
-    return this.movies.find((movie) => movie.id === movieId)?.title ?? `Movie ${movieId}`;
-  }
-
-  getScreenName(screenId: number): string {
-    return this.screens.find((screen) => screen.id === screenId)?.name ?? `Screen ${screenId}`;
-  }
-
-  formatDate(value: string): string {
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return value;
-    return date.toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    });
-  }
-
-  formatTime(value: string): string {
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return value;
-    return date.toLocaleTimeString('en-GB', {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
   }
 
   private combineDateTime(date: string, time: string): string {

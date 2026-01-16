@@ -1,6 +1,6 @@
 // src/app/movie-detail/movie-detail.component.ts
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MovieService } from '../services/movie.service';
 import { Movie } from '../models/movie.model';
@@ -19,13 +19,11 @@ export class MovieDetailComponent implements OnInit {
   city: string | null = null;
   showtimesByCinema: { cinemaName: string; showtimes: ShowtimeResponse[] }[] = [];
   screens: ScreenResponse[] = [];
-  defaultPoster = 'https://placehold.co/400x600/111827/ffffff?text=Poster+coming+soon';
 
   constructor(
     private route: ActivatedRoute,
     private movieService: MovieService,
-    private showtimeService: ShowtimeService,
-    private cdr: ChangeDetectorRef
+    private showtimeService: ShowtimeService
   ) {}
 
   ngOnInit(): void {
@@ -35,7 +33,6 @@ export class MovieDetailComponent implements OnInit {
 
       this.movieService.getMovieById(id).subscribe((movie) => {
         this.movie = movie;
-        this.cdr.markForCheck();
       });
       this.loadScreensAndShowtimes(id);
     });
@@ -69,12 +66,10 @@ export class MovieDetailComponent implements OnInit {
       next: (screens) => {
         this.screens = screens;
         this.loadShowtimes(movieId);
-        this.cdr.markForCheck();
       },
       error: () => {
         this.screens = [];
         this.loadShowtimes(movieId);
-        this.cdr.markForCheck();
       },
     });
   }
@@ -91,14 +86,6 @@ export class MovieDetailComponent implements OnInit {
         const name = this.getScreenName(Number(screenId));
         return { cinemaName: name, showtimes: byScreen[Number(screenId)] };
       });
-      this.cdr.markForCheck();
     });
-  }
-
-  onImgError(event: Event): void {
-    const target = event.target as HTMLImageElement | null;
-    if (target && target.src !== this.defaultPoster) {
-      target.src = this.defaultPoster;
-    }
   }
 }

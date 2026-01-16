@@ -1,58 +1,56 @@
 <div class="admin-page">
   <div class="admin-card">
-    <h1 class="admin-title">Movie admin</h1>
+    <h1 class="admin-title">Admin – Add movie</h1>
     <p class="admin-message">
-      Create movies that match the backend fields. Need to add showtimes? <a routerLink="/admin/showtimes">Go to showtime creator</a>.
+      Need to add showtimes? <a routerLink="/admin/showtimes">Go to showtime creator</a>.
     </p>
 
     <form (ngSubmit)="addMovie()">
       <div class="form-group">
-        <label for="title">Title</label>
-        <input id="title" type="text" [(ngModel)]="title" name="title" placeholder="Movie title" />
+        <label for="city">City:</label>
+        <select id="city" [(ngModel)]="city" name="city">
+          <option *ngFor="let c of cities" [value]="c">
+            {{ c }}
+          </option>
+        </select>
       </div>
 
       <div class="form-group">
-        <label for="description">Description</label>
-        <textarea
-          id="description"
-          [(ngModel)]="description"
-          name="description"
-          rows="3"
-          placeholder="Short synopsis"
-        ></textarea>
+        <label for="title">Title:</label>
+        <input
+          id="title"
+          type="text"
+          [(ngModel)]="title"
+          name="title"
+          placeholder="Movie title"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="posterUrl">Poster URL:</label>
+        <input
+          id="posterUrl"
+          type="text"
+          [(ngModel)]="posterUrl"
+          name="posterUrl"
+          placeholder="https://…"
+        />
       </div>
 
       <div class="form-row">
         <div class="form-group half">
-          <label for="posterUrl">Poster URL</label>
+          <label for="rating">Rating:</label>
           <input
-            id="posterUrl"
+            id="rating"
             type="text"
-            [(ngModel)]="posterUrl"
-            name="posterUrl"
-            placeholder="https://example.com/poster.jpg"
+            [(ngModel)]="rating"
+            name="rating"
+            placeholder="PG-13"
           />
-        </div>
-        <div class="form-group half">
-          <label for="trailerUrl">Trailer URL</label>
-          <input
-            id="trailerUrl"
-            type="text"
-            [(ngModel)]="trailerUrl"
-            name="trailerUrl"
-            placeholder="https://example.com/trailer.mp4"
-          />
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group half">
-          <label for="rating">Rating</label>
-          <input id="rating" type="text" [(ngModel)]="rating" name="rating" placeholder="PG-13" />
         </div>
 
         <div class="form-group half">
-          <label for="duration">Duration (min)</label>
+          <label for="duration">Duration (min):</label>
           <input
             id="duration"
             type="number"
@@ -63,52 +61,56 @@
         </div>
       </div>
 
-      <div class="form-row">
-        <div class="form-group half">
-          <label for="genres">Genres (comma separated)</label>
-          <input
-            id="genres"
-            type="text"
-            [(ngModel)]="genresText"
-            name="genresText"
-            placeholder="Action, Sci-Fi"
-          />
-        </div>
-
-        <div class="form-group half">
-          <label for="language">Language</label>
-          <input id="language" type="text" [(ngModel)]="language" name="language" placeholder="English" />
-        </div>
+      <div class="form-group">
+        <label for="genres">Genres (comma separated):</label>
+        <input
+          id="genres"
+          type="text"
+          [(ngModel)]="genresText"
+          name="genresText"
+          placeholder="Action, Sci-Fi"
+        />
       </div>
 
-      <div class="form-row">
-        <div class="form-group half">
-          <label for="releaseDate">Release date</label>
-          <input id="releaseDate" type="date" [(ngModel)]="releaseDate" name="releaseDate" />
-        </div>
+      <div class="form-group">
+        <label for="language">Language:</label>
+        <input
+          id="language"
+          type="text"
+          [(ngModel)]="language"
+          name="language"
+          placeholder="English"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="showtimes">Showtimes (comma separated):</label>
+        <input
+          id="showtimes"
+          type="text"
+          [(ngModel)]="showtimesText"
+          name="showtimesText"
+          placeholder="18:30, 21:00"
+        />
       </div>
 
       <div class="checkbox-row">
-        <label class="checkbox">
-          <input type="checkbox" [(ngModel)]="makeHighlight" name="makeHighlight" />
-          Highlight movie
-        </label>
-        <label class="checkbox">
-          <input type="checkbox" [(ngModel)]="isNowShowing" name="isNowShowing" />
-          Currently showing
-        </label>
+        <input
+          id="makeHighlight"
+          type="checkbox"
+          [(ngModel)]="makeHighlight"
+          name="makeHighlight"
+        />
+        <label for="makeHighlight">Use as highlight movie for this city</label>
       </div>
 
-      <button type="submit" class="admin-button">
-        Save movie
+      <button type="button" class="admin-button" (click)="addMovie()">
+        Add movie
       </button>
     </form>
 
-    <div *ngIf="error" class="admin-message error">
-      {{ error }}
-    </div>
-    <div *ngIf="message" class="admin-message success">
+    <p class="admin-message" *ngIf="message">
       {{ message }}
-    </div>
+    </p>
   </div>
 </div>

@@ -39,8 +39,7 @@
 }
 
 .form-group input,
-.form-group select,
-.form-group textarea {
+.form-group select {
   width: 100%;
   padding: 0.7rem;
   border-radius: 4px;
@@ -58,12 +57,6 @@
   flex: 1;
 }
 
-.checkbox-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 0.5rem;
-}
-
 .checkbox-row {
   display: flex;
   align-items: center;
@@ -71,17 +64,6 @@
   margin-bottom: 1.5rem;
   font-size: 0.9rem;
   color: #555;
-}
-
-.checkbox {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-.checkbox input[type='checkbox'] {
-  width: 16px;
-  height: 16px;
 }
 
 .admin-button {
@@ -103,13 +85,6 @@
 .admin-message {
   margin-top: 1.2rem;
   font-size: 0.9rem;
-  text-align: center;
-}
-
-.admin-message.success {
   color: #16a34a;
-}
-
-.admin-message.error {
-  color: #dc2626;
+  text-align: center;
 }

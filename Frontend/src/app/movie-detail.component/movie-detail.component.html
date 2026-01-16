@@ -2,11 +2,7 @@
   <!-- HERO SECTION -->
   <section class="movie-hero">
     <div class="poster-wrapper">
-      <img
-        [src]="movie.posterUrl || defaultPoster"
-        [alt]="movie.title + ' poster'"
-        (error)="onImgError($event)"
-      />
+      <img [src]="movie.posterUrl" [alt]="movie.title + ' poster'" />
     </div>
 
     <div class="hero-info">

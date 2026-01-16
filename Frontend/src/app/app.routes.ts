@@ -9,7 +9,6 @@ import { MovieDetailComponent } from './movie-detail.component/movie-detail.comp
 import { SeatSelectionComponent } from './seat-selection.component/seat-selection.component';
 import { TicketHistory } from './ticket-history/ticket-history';
 import { AddShowtime } from './add-showtime/add-showtime';
-import { AddScreen } from './add-screen/add-screen';
 import { adminGuard } from './guards/admin.guard';
 
 export const routes: Routes = [
@@ -33,7 +32,6 @@ export const routes: Routes = [
       { path: 'login', component: Login, title: 'Login Page' },
       { path: 'sign-up', component: SignUp, title: 'Sign up' },
       { path: 'admin', component: Admin, title: 'Admin', canActivate: [adminGuard] },
-      { path: 'admin/screens', component: AddScreen, title: 'Add screen', canActivate: [adminGuard] },
       { path: 'movie/:id/:city', component: MovieDetailComponent },
       { path: 'seats/:showtimeId', component: SeatSelectionComponent },
       { path: 'tickets', component: TicketHistory, title: 'My tickets' },

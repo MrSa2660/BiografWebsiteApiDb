@@ -1,11 +1,6 @@
 <div class="tickets-page">
-  <header class="page-head">
-    <div>
-      <p class="eyebrow">Your tickets</p>
-      <h1>My tickets</h1>
-      <p class="subtitle" *ngIf="userName">Signed in as {{ userName }}</p>
-    </div>
-  </header>
+  <h1>My tickets</h1>
+  <p class="subtitle" *ngIf="userName">Signed in as {{ userName }}</p>
 
   <div *ngIf="error" class="alert alert-error">{{ error }}</div>
   <div *ngIf="isLoading">Loading your tickets...</div>
@@ -15,24 +10,10 @@
 
     <div class="ticket-grid" *ngIf="tickets.length">
       <article class="ticket-card" *ngFor="let ticket of tickets; trackBy: trackById">
-        <div class="ticket-top">
-          <div>
-            <div class="movie-title">{{ ticket.movieTitle }}</div>
-            <div class="ticket-meta">
-              {{ ticket.startDateLabel }} · {{ ticket.startTimeLabel }} · {{ ticket.screenName }}
-            </div>
-          </div>
-          <span class="status-pill">{{ ticket.bookingStatus }}</span>
-        </div>
-
-        <div class="ticket-body">
-          <div class="ticket-code">{{ ticket.code }}</div>
-          <div class="ticket-seat">{{ ticket.seatLabel }}</div>
-        </div>
-
-        <div class="ticket-footer">
-          <span>Booking #{{ ticket.bookingId }}</span>
-          <span>Issued {{ ticket.issuedAt | date : 'medium' }}</span>
+        <div class="ticket-code">{{ ticket.code }}</div>
+        <div class="ticket-seat">{{ ticket.seatLabel }}</div>
+        <div class="ticket-meta">
+          Booking #{{ ticket.bookingId }} · {{ ticket.issuedAt | date : 'medium' }}
         </div>
       </article>
     </div>

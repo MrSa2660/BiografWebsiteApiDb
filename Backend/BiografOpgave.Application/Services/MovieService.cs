@@ -38,6 +38,7 @@ public class MovieService : IMovieService
         existing.TrailerUrl = movie.TrailerUrl;
         existing.ReleaseDate = movie.ReleaseDate;
         existing.IsNowShowing = movie.IsNowShowing;
+        existing.CitiesCsv = movie.Cities;
         existing.ShowtimesCsv = movie.Showtimes;
         existing.IsHighlight = movie.IsHighlight;
 
@@ -60,6 +61,7 @@ public class MovieService : IMovieService
         TrailerUrl = movie.TrailerUrl,
         ReleaseDate = movie.ReleaseDate,
         IsNowShowing = movie.IsNowShowing,
+        Cities = movie.CitiesCsv,
         Showtimes = movie.ShowtimesCsv,
         IsHighlight = movie.IsHighlight
     };
@@ -77,6 +79,7 @@ public class MovieService : IMovieService
         TrailerUrl = movie.TrailerUrl,
         ReleaseDate = movie.ReleaseDate,
         IsNowShowing = movie.IsNowShowing,
+        CitiesCsv = movie.Cities,
         ShowtimesCsv = movie.Showtimes,
         IsHighlight = movie.IsHighlight
     };

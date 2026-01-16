@@ -17,34 +17,34 @@ interface CityOption {
 export class CinemaSelector {
   cities: CityOption[] = [
     {
-      name: 'Koebenhavn',
-      tagline: 'IMAX, Dolby Atmos og luksussaeder i hovedstaden.',
-      highlight: '13 biografer a 120 sale',
+      name: 'København',
+      tagline: 'IMAX, Dolby Atmos og luksussæder i hovedstaden.',
+      highlight: '13 biografer · 120 sale',
     },
     {
-      name: 'Stor Koebenhavn',
+      name: 'Stor København',
       tagline: 'Nem adgang, fri parkering og komfortable sale.',
-      highlight: '6 biografer a 45 sale',
+      highlight: '6 biografer · 45 sale',
     },
     {
       name: 'Aarhus',
       tagline: 'Moderne sale midt i byen.',
-      highlight: '4 biografer a 30 sale',
+      highlight: '4 biografer · 30 sale',
     },
     {
       name: 'Aalborg',
       tagline: 'Hygge og skarp projektion i nord.',
-      highlight: '3 biografer a 20 sale',
+      highlight: '3 biografer · 20 sale',
     },
     {
       name: 'Fyn',
-      tagline: 'Familievenlige biografer paa oeen.',
-      highlight: '3 biografer a 18 sale',
+      tagline: 'Familievenlige biografer på øen.',
+      highlight: '3 biografer · 18 sale',
     },
     {
-      name: 'Nykobing Falster',
-      tagline: 'Lokal perle med nye saeder.',
-      highlight: '1 biograf a 6 sale',
+      name: 'Nykøbing Falster',
+      tagline: 'Lokal perle med nye sæder.',
+      highlight: '1 biograf · 6 sale',
     },
   ];
 }
