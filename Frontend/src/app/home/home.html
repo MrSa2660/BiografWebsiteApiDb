@@ -1,0 +1,166 @@
+<!-- src/app/home/home.component.html -->
+<div class="home" *ngIf="city">
+  <section class="home__header">
+    <h1 class="home__title">
+      Showtimes in
+      <span class="home__city">{{ city }}</span>
+    </h1>
+    <p class="home__subtitle">
+      Select a showtime to reserve your seats. Mobile tickets are supported in all DreamCinema
+      locations.
+    </p>
+  </section>
+
+  <!-- SHOWTIMES LIST (today) -->
+  <section class="showtime-board" *ngIf="todayShowtimes.length">
+    <div class="showtime-board__header">
+      <div>
+        <p class="eyebrow">Now booking</p>
+        <h2 class="section-title">Showtimes today</h2>
+      </div>
+      <span class="pill pill--solid">{{ todayShowtimes.length }} times</span>
+    </div>
+
+    <div class="showtime-board__grid">
+      <article class="showtime-card" *ngFor="let st of todayShowtimes">
+        <div class="showtime-card__top">
+          <div class="movie-thumb">
+            <img
+              [src]="st.moviePoster || defaultPoster"
+              [alt]="st.movieTitle + ' poster'"
+              (error)="onImgError($event)"
+            />
+          </div>
+          <div class="movie-info">
+            <div class="movie-info__title">{{ st.movieTitle }}</div>
+            <div class="movie-info__meta">
+              {{ st.movieDuration }} min &middot; Rated {{ st.movieRating }} &middot;
+              {{ st.movieLanguage || 'Original' }}
+            </div>
+          </div>
+          <div class="showtime-meta">
+            <div class="showtime-time">{{ st.timeLabel }}</div>
+            <div class="showtime-date">{{ st.dateLabel }}</div>
+          </div>
+        </div>
+
+        <div class="showtime-card__footer">
+          <div class="pill-row">
+            <span class="pill">{{ st.screenName }}</span>
+            <span class="pill" *ngIf="st.language">{{ st.language }}</span>
+            <span class="pill" *ngIf="st.is3D">3D</span>
+          </div>
+          <div class="showtime-card__actions">
+            <span class="price">{{ st.price | currency : 'DKK' : 'symbol' : '1.0-0' }}</span>
+            <a class="btn-primary btn-primary--compact" [routerLink]="['/seats', st.id]">Pick seats</a>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- HERO / HIGHLIGHT MOVIE -->
+  <section class="home__hero" *ngIf="highlightMovie">
+    <div class="hero-poster">
+      <img
+        [src]="highlightMovie.posterUrl || defaultPoster"
+        [alt]="highlightMovie.title + ' poster'"
+        (error)="onImgError($event)"
+      />
+
+      <div class="poster-footer">
+        <div class="poster-meta">
+          <div class="poster-title">{{ highlightMovie.title }}</div>
+          <div>
+            Rated {{ highlightMovie.rating }} &middot; {{ highlightMovie.durationMinutes }} min &middot;
+            {{ highlightMovie.genres.join(', ') }}
+          </div>
+        </div>
+        <button class="btn-primary" [routerLink]="['/movie', highlightMovie.id, city]">
+          {{ highlightMovie.showtimes[0] || '20:00' }} &middot; Book
+        </button>
+      </div>
+    </div>
+
+    <div class="hero-text">
+      <h2>Tonight's highlight</h2>
+      <p>
+        Enjoy <strong>{{ highlightMovie.title }}</strong> in {{ city }} on the big screen with
+        immersive sound and ultra-clear projection.
+      </p>
+      <ul>
+        <li>Reclining seats in all auditoriums</li>
+        <li>Dolby Atmos in selected halls</li>
+        <li>Fresh popcorn and barista coffee</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- UPCOMING (AFTER TODAY) BY MOVIE -->
+  <section class="home__movies" *ngIf="upcomingByMovie.length">
+    <h2 class="section-title">Upcoming showtimes</h2>
+    <div class="movie-grid">
+      <article class="movie-card" *ngFor="let entry of upcomingByMovie">
+        <div class="movie-card__poster">
+          <img
+            [src]="entry.movie.posterUrl || defaultPoster"
+            [alt]="entry.movie.title + ' poster'"
+            (error)="onImgError($event)"
+          />
+        </div>
+        <div class="movie-card__body">
+          <h3 class="movie-card__title">{{ entry.movie.title }}</h3>
+          <p class="movie-card__meta">
+            {{ entry.movie.genres.join(', ') }} &middot; {{ entry.movie.durationMinutes }} min &middot;
+            {{ entry.movie.language }}
+          </p>
+          <div class="showtimes">
+            <span class="time-pill" *ngFor="let time of entry.times">
+              {{ time }}
+            </span>
+          </div>
+          <button class="btn-secondary" [routerLink]="['/movie', entry.movie.id, city]">
+            View seats
+          </button>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- OTHER MOVIES -->
+  <section class="home__movies" *ngIf="movies.length">
+    <h2 class="section-title">Other movies showing today</h2>
+
+    <div class="movie-grid">
+      <article class="movie-card" *ngFor="let movie of movies">
+        <div class="movie-card__poster">
+          <img
+            [src]="movie.posterUrl || defaultPoster"
+            [alt]="movie.title + ' poster'"
+            (error)="onImgError($event)"
+          />
+        </div>
+        <div class="movie-card__body">
+          <h3 class="movie-card__title">{{ movie.title }}</h3>
+          <p class="movie-card__meta">
+            {{ movie.genres.join(', ') }} &middot; {{ movie.durationMinutes }} min &middot;
+            {{ movie.language }}
+          </p>
+          <div class="showtimes">
+            <span class="time-pill" *ngFor="let time of movie.showtimes">
+              {{ time }}
+            </span>
+          </div>
+          <button class="btn-secondary" [routerLink]="['/movie', movie.id, city]">
+            View seats
+          </button>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- If no movies found -->
+  <section class="home__movies" *ngIf="!movies.length && !highlightMovie">
+    <p>No showtimes found for {{ city }} today.</p>
+  </section>
+</div>
