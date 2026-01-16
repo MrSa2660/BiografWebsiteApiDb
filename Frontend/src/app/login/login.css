@@ -1,0 +1,87 @@
+.login-page {
+  height: calc(100vh - 46px);
+  background-color: #1e293b;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+.login-card {
+  background-color: #ffffff;
+  padding: 2.5rem 3rem;
+  border-radius: 8px;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+  width: 380px;
+  box-sizing: border-box;
+}
+
+.login-title {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-weight: normal;
+  color: #555;
+}
+
+.form-group {
+  margin-bottom: 1.3rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+/* Show password */
+.show-password {
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.error-message {
+  margin-bottom: 1rem;
+  color: #b91c1c;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.login-button {
+  width: 100%;
+  padding: 0.9rem;
+  background-color: #1e293b;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+}
+
+.login-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.login-button:hover {
+  opacity: 0.9;
+}
+
+.no-account {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.no-account a {
+  color: #1e293b;
+  text-decoration: none;
+}
+
+.no-account a:hover {
+  text-decoration: underline;
+}

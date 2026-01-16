@@ -1,0 +1,26 @@
+<div class="cinema-selector">
+  <div class="hero">
+    <p class="eyebrow">Choose your cinema</p>
+    <h1>Where do you want to watch tonight?</h1>
+    <p class="lede">
+      Pick your city to see showtimes, book seats, and grab tickets. Mobile tickets are supported
+      in all locations.
+    </p>
+    <div class="badges">
+      <span>Dolby Atmos</span>
+      <span>Recliner seats</span>
+      <span>Snacks & espresso</span>
+    </div>
+  </div>
+
+  <section class="cinema-grid">
+    <article class="city-card" *ngFor="let city of cities">
+      <div class="city-text">
+        <p class="city-name">{{ city.name }}</p>
+        <p class="city-tagline">{{ city.tagline }}</p>
+        <p class="city-highlight">{{ city.highlight }}</p>
+      </div>
+      <button class="city-cta" [routerLink]="['/home', city.name]">View showtimes</button>
+    </article>
+  </section>
+</div>

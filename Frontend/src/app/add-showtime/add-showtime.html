@@ -1,0 +1,92 @@
+<div class="page">
+  <header class="header">
+    <div>
+      <h1>Add showtime</h1>
+      <p>Create a new showtime for an existing movie and screen.</p>
+    </div>
+    <a routerLink="/admin" class="link">&lt;- Back to admin</a>
+  </header>
+
+  <div class="card">
+    <div *ngIf="error" class="alert alert-error">{{ error }}</div>
+    <div *ngIf="message" class="alert alert-success">{{ message }}</div>
+
+    <form (ngSubmit)="submit()">
+      <div class="form-grid">
+        <label>
+          Movie
+          <select [(ngModel)]="movieId" name="movieId">
+            <option [ngValue]="null">Select movie</option>
+            <option *ngFor="let m of movies" [ngValue]="m.id">{{ m.title }}</option>
+          </select>
+        </label>
+
+        <label>
+          Screen
+          <select [(ngModel)]="screenId" name="screenId">
+            <option [ngValue]="null">Select screen</option>
+            <option *ngFor="let s of screens" [ngValue]="s.id">
+              {{ s.name }} ({{ s.rows }} x {{ s.seatsPerRow }})
+            </option>
+          </select>
+        </label>
+
+        <label>
+          Date
+          <input type="date" [(ngModel)]="date" name="date" />
+        </label>
+
+        <label>
+          Time
+          <input type="time" [(ngModel)]="time" name="time" />
+        </label>
+
+        <label>
+          Base price (DKK)
+          <input type="number" [(ngModel)]="basePrice" name="basePrice" min="0" />
+        </label>
+
+        <label>
+          Language
+          <input type="text" [(ngModel)]="language" name="language" />
+        </label>
+
+        <label class="checkbox">
+          <input type="checkbox" [(ngModel)]="is3D" name="is3D" />
+          3D showing
+        </label>
+      </div>
+
+      <button type="submit" [disabled]="isSubmitting" class="btn">
+        {{ isSubmitting ? 'Saving...' : 'Create showtime' }}
+      </button>
+    </form>
+  </div>
+
+  <section class="card list-card">
+    <header class="list-header">
+      <h2>Showtimes</h2>
+      <button type="button" class="link-button" (click)="loadShowtimes()">Refresh</button>
+    </header>
+
+    <div *ngIf="showtimesError" class="alert alert-error">{{ showtimesError }}</div>
+    <p *ngIf="!isLoadingShowtimes && !showtimes.length">No showtimes yet.</p>
+
+    <div *ngIf="showtimes.length" class="showtime-list">
+      <article *ngFor="let s of showtimes" class="showtime-row">
+        <div>
+          <strong>{{ getMovieTitle(s.movieId) }}</strong>
+          <div class="meta">
+            {{ getScreenName(s.screenId) }} · {{ formatDate(s.startTime) }} at
+            {{ formatTime(s.startTime) }}
+          </div>
+        </div>
+        <div class="showtime-tags">
+          <span class="price">{{ s.basePrice | currency : 'DKK' : 'symbol' : '1.0-0' }}</span>
+          <span *ngIf="s.is3D" class="tag">3D</span>
+          <span *ngIf="s.language" class="tag">{{ s.language }}</span>
+        </div>
+      </article>
+    </div>
+  </section>
+</div>

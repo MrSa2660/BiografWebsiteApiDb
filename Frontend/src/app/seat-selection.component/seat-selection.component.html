@@ -1,0 +1,51 @@
+<div class="seat-page">
+  <div *ngIf="error" class="alert alert-error">{{ error }}</div>
+  <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+
+  <ng-container *ngIf="apiShowtime; else loadingOrError">
+    <h1>Choose your seats</h1>
+    <p class="showtime-meta">
+      {{ uiShowtime?.cinemaName || 'Cinema' }} - {{ uiShowtime?.hall || 'Hall' }}<br />
+      {{ uiShowtime?.date || (apiShowtime.startTime | date : 'yyyy-MM-dd') }}
+      at
+      {{ uiShowtime?.time || (apiShowtime.startTime | date : 'shortTime') }}
+    </p>
+
+    <div class="legend">
+      <span class="dot available"></span> Available
+      <span class="dot selected"></span> Selected
+      <span class="dot taken"></span> Reserved
+    </div>
+
+    <div class="screen">Screen</div>
+
+    <div class="seats-wrapper">
+      <div class="row-label" *ngFor="let row of rows">
+        <div
+          class="seat"
+          *ngFor="let seat of seatsPerRow"
+          [ngClass]="{
+            'seat-taken': isSeatTaken(row, seat),
+            'seat-selected': isSeatSelected(row, seat)
+          }"
+          (click)="toggleSeat(row, seat)"
+        >
+          {{ seatLabel(row, seat) }}
+        </div>
+      </div>
+    </div>
+
+    <div class="summary">
+      <div><strong>{{ selectedSeats.size }}</strong> seat(s) selected</div>
+      <div>Total: {{ totalPrice | currency : 'DKK' : 'symbol' : '1.0-0' }}</div>
+      <button class="btn-primary" (click)="purchase()" [disabled]="isSubmitting || !selectedSeats.size">
+        {{ isSubmitting ? 'Booking...' : 'Confirm booking' }}
+      </button>
+    </div>
+  </ng-container>
+
+  <ng-template #loadingOrError>
+    <p *ngIf="isLoading">Loading seats...</p>
+    <p *ngIf="!isLoading && !error">Showtime not found.</p>
+  </ng-template>
+</div>

@@ -1,0 +1,63 @@
+<div class="page">
+  <header class="header">
+    <div>
+      <h1>Add screen</h1>
+      <p>Create a new screen (sal) with rows and seats per row.</p>
+    </div>
+    <a routerLink="/admin" class="link">&lt;- Back to admin</a>
+  </header>
+
+  <div class="card">
+    <div *ngIf="error" class="alert alert-error">{{ error }}</div>
+    <div *ngIf="message" class="alert alert-success">{{ message }}</div>
+
+    <form (ngSubmit)="submit()">
+      <div class="form-grid">
+        <label>
+          Name (e.g. Koebenhavn Sal 2)
+          <input type="text" [(ngModel)]="name" name="name" />
+        </label>
+
+        <label>
+          City
+          <select [(ngModel)]="city" name="city">
+            <option *ngFor="let c of cityOptions" [ngValue]="c">{{ c }}</option>
+          </select>
+        </label>
+
+        <label>
+          Rows
+          <input type="number" [(ngModel)]="rows" name="rows" min="1" />
+        </label>
+
+        <label>
+          Seats per row
+          <input type="number" [(ngModel)]="seatsPerRow" name="seatsPerRow" min="1" />
+        </label>
+      </div>
+
+      <button type="submit" [disabled]="isSubmitting" class="btn">
+        {{ isSubmitting ? 'Saving...' : 'Create screen' }}
+      </button>
+    </form>
+  </div>
+
+  <section class="card list-card">
+    <header class="list-header">
+      <h2>Screens</h2>
+      <button type="button" class="link-button" (click)="loadScreens()">Refresh</button>
+    </header>
+
+    <div *ngIf="isLoading">Loading screens...</div>
+    <div *ngIf="!isLoading && !screens.length">No screens yet.</div>
+
+    <div *ngIf="screens.length" class="screen-list">
+      <article *ngFor="let s of screens" class="screen-row">
+        <div>
+          <strong>{{ s.name }}</strong>
+          <div class="meta">{{ s.city }} · {{ s.rows }} rows × {{ s.seatsPerRow }} seats</div>
+        </div>
+      </article>
+    </div>
+  </section>
+</div>

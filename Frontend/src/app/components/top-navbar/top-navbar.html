@@ -1,0 +1,42 @@
+﻿<nav class="navbar navbar-fixed-top navbar-dark bg-inverse">
+  <div class="container">
+    <ul class="nav navbar-nav" routerLinkActive="active">
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          [routerLink]="['/home', selectedCity || 'Koebenhavn']"
+          [class.disabled]="!selectedCity"
+        >
+          Home
+        </a>
+      </li>
+      <li class="nav-item" style="float: right" *ngIf="hasUser">
+        <a class="nav-link" href="#" (click)="logout(); $event.preventDefault()">Logout</a>
+      </li>
+      <li class="nav-item" style="float: right" *ngIf="isAdmin">
+        <a class="nav-link" [routerLink]="['/admin']">Movie</a>
+      </li>
+      <li class="nav-item" style="float: right" *ngIf="isAdmin">
+        <a class="nav-link" [routerLink]="['/admin/showtimes']">Showtimes</a>
+      </li>
+      <li class="nav-item" style="float: right" *ngIf="isAdmin">
+        <a class="nav-link" [routerLink]="['/admin/screens']">Screens</a>
+      </li>
+
+      <li class="nav-item" style="float: right" *ngIf="hasUser">
+        <a class="nav-link" [routerLink]="['/tickets']">Tickets</a>
+      </li>
+
+      <li class="nav-item" style="float: right" *ngIf="!hasUser">
+        <a class="nav-link" [routerLink]="['/login']">Login</a>
+      </li>
+      <li class="nav-item" style="float: right">
+        <a class="nav-link" [routerLink]="['/cinema-selector']">
+          {{ selectedCity || 'Choose cinema' }}
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<router-outlet></router-outlet>

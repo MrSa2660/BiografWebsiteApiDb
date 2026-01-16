@@ -1,0 +1,60 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+
+namespace BiografOpgave.API.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class TicketsController : ControllerBase
+{
+    private readonly ITicketService _service;
+
+    public TicketsController(ITicketService service)
+    {
+        _service = service;
+    }
+
+    [HttpGet("booking/{bookingId:int}")]
+    public async Task<ActionResult<IEnumerable<TicketDTOResponse>>> GetForBooking(int bookingId)
+        => Ok(await _service.GetForBooking(bookingId));
+
+    [Authorize]
+    [HttpGet("user/{userId:int}")]
+    public async Task<ActionResult<IEnumerable<TicketDTOResponse>>> GetForUser(int userId)
+    {
+        var principal = HttpContext.User;
+        var role = principal.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
+        var sub = principal.FindFirst(JwtRegisteredClaimNames.Sub)?.Value
+            ?? principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var isAdmin = string.Equals(role, "Admin", StringComparison.OrdinalIgnoreCase);
+
+        if (!isAdmin && (!int.TryParse(sub, out var requesterId) || requesterId != userId))
+            return Forbid();
+
+        return Ok(await _service.GetForUser(userId));
+    }
+
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<TicketDTOResponse>> Get(int id)
+    {
+        var ticket = await _service.GetById(id);
+        if (ticket == null) return NotFound();
+        return Ok(ticket);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<TicketDTOResponse>> Create(TicketDTORequest dto)
+    {
+        var created = await _service.Create(dto);
+        return CreatedAtAction(nameof(Get), new { id = created?.Id }, created);
+    }
+
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var deleted = await _service.Delete(id);
+        if (!deleted) return NotFound();
+        return NoContent();
+    }
+}
