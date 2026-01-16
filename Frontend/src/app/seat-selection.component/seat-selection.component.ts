@@ -1,7 +1,7 @@
 // src/app/seat-selection/seat-selection.component.ts
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MovieService } from '../services/movie.service';
 import { Showtime } from '../models/showtime.model';
 import {
@@ -29,12 +29,14 @@ export class SeatSelectionComponent implements OnInit {
   isSubmitting = false;
   error = '';
   successMessage = '';
+  private redirectTimer?: ReturnType<typeof setTimeout>;
 
   constructor(
     private route: ActivatedRoute,
     private movieService: MovieService,
     private bookingService: BookingService,
     private authService: AuthService,
+    private router: Router,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -48,6 +50,10 @@ export class SeatSelectionComponent implements OnInit {
       }
       this.loadShowtime();
     });
+  }
+
+  ngOnDestroy(): void {
+    this.clearRedirectTimer();
   }
 
   get rows(): number[] {
@@ -121,9 +127,10 @@ export class SeatSelectionComponent implements OnInit {
       .subscribe({
         next: (booking) => {
           this.isSubmitting = false;
-          this.successMessage = `Booking confirmed. ${booking.tickets.length} ticket(s) saved.`;
+          this.successMessage = `Booking confirmed. ${booking.tickets.length} ticket(s) saved. Redirecting to your tickets...`;
           this.selectedSeats.clear();
           this.loadReservedSeats();
+          this.scheduleTicketsRedirect();
           this.cdr.markForCheck();
         },
         error: () => {
@@ -179,7 +186,22 @@ export class SeatSelectionComponent implements OnInit {
   }
 
   private resetMessages() {
+    this.clearRedirectTimer();
     this.error = '';
     this.successMessage = '';
+  }
+
+  private scheduleTicketsRedirect() {
+    this.clearRedirectTimer();
+    this.redirectTimer = setTimeout(() => {
+      void this.router.navigate(['/tickets']);
+    }, 1500);
+  }
+
+  private clearRedirectTimer() {
+    if (this.redirectTimer) {
+      clearTimeout(this.redirectTimer);
+      this.redirectTimer = undefined;
+    }
   }
 }

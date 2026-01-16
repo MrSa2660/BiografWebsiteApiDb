@@ -1,5 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute, convertToParamMap } from '@angular/router';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ActivatedRoute, convertToParamMap, Router } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
 import { SeatSelectionComponent } from './seat-selection.component';
 import { MovieService } from '../services/movie.service';
@@ -9,10 +10,11 @@ import { AuthService } from '../services/auth.service';
 describe('SeatSelectionComponent', () => {
   let component: SeatSelectionComponent;
   let fixture: ComponentFixture<SeatSelectionComponent>;
+  let router: Router;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SeatSelectionComponent],
+      imports: [SeatSelectionComponent, RouterTestingModule],
       providers: [
         { provide: ActivatedRoute, useValue: { paramMap: of(convertToParamMap({ showtimeId: '1' })) } },
         { provide: MovieService, useValue: { getShowtimeById: () => undefined } },
@@ -51,6 +53,9 @@ describe('SeatSelectionComponent', () => {
       ],
     }).compileComponents();
 
+    router = TestBed.inject(Router);
+    spyOn(router, 'navigate').and.returnValue(Promise.resolve(true));
+
     fixture = TestBed.createComponent(SeatSelectionComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -59,4 +64,13 @@ describe('SeatSelectionComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('redirects to tickets after a successful booking', fakeAsync(() => {
+    component.selectedSeats = new Set(['1-1']);
+
+    component.purchase();
+    tick(1600);
+
+    expect(router.navigate).toHaveBeenCalledWith(['/tickets']);
+  }));
 });
