@@ -2,9 +2,13 @@ namespace BiografOpgave.Infrastructure;
 
 public class DatabaseContext : DbContext
 {
+
+    // DbContext = "broen" mellem C#-entities og databasen.
+    // EF Core bruger denne klasse til at lave tabeller, relationer, migrations og queries.
     public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) { }
 
-    // tables presented as DbSet<T>
+    // Talbes presented as DbSet<T>
+    // EF Core opretter tabeller ud fra mine entities.
     public DbSet<User> Users { get; set; }
     public DbSet<Movie> Movies { get; set; }
     public DbSet<Screen> Screens { get; set; }
@@ -13,10 +17,16 @@ public class DatabaseContext : DbContext
     public DbSet<BookingSeat> BookingSeats { get; set; }
     public DbSet<Ticket> Tickets { get; set; }
 
+    // OnModelCreating bruges til "Fluent API" konfiguration:
+    // - precision på decimals
+    // - relationer
+    // - indexes/constraints
+    // - seed data (HasData)
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
+        // Sikrer at decimal-felter gemmes korrekt i SQL Server (fx decimal(10,2)).
         modelBuilder.Entity<Booking>()
             .Property(b => b.TotalPrice)
             .HasPrecision(10, 2);
